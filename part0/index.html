@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 0</title>
+</head>
+<body>
+    <h1>Part 0</h1>
+    <h1>Notes -- single page app</h1>
+    
+    
+    <div id="notes">
+        
+    </div>
+   
+
+    <form id="noteForm">
+        <input type="text" id="noteInput" name="note" required>
+        <input type="submit" value="Add note">
+    </form>
+
+    <script>
+        var notes = JSON.parse(localStorage.getItem('notes')) || [];
+
+        var notesDiv = function() {
+            var div = document.getElementById('notes');
+            div.innerHTML = '';
+
+            notes.forEach(function(note) {
+                var p = document.createElement('p');
+                p.textContent = 'Javascript ----> ' + note.content + '<------ DOM';
+                div.appendChild(p);
+            });
+        };
+
+        document.getElementById('noteForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var noteInput = document.getElementById('noteInput').value.trim();
+            if (noteInput !== '') {
+                var note = {
+                    content: noteInput,
+                    date: new Date().toISOString(),
+                };
+                notes.push(note);
+                localStorage.setItem('notes', JSON.stringify(notes));
+                notesDiv();
+                document.getElementById('noteInput').value = '';
+            }
+        });
+
+        // Load notes when the page loads
+        notesDiv();
+    </script>
+</body>
+</html>

@@ -17,7 +17,7 @@ const App = () => {
         <Button onClick={setNeutralValue} text='neutral' />
         <Button onClick={setBadValue} text='bad' />
       <h1>statistics</h1>
-        
+        <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
@@ -28,18 +28,28 @@ const Button = ({ onClick, text }) => (
   </button>
 )
 
-const Statistics = ({good, neutral, bad}) => {
-  const total = good + neutral + bad
-  const positive = good / total * 100
-  return (
-    <div>
-    <p>Good : {good}</p>
-    <p>Neutral : {neutral}</p>
-    <p>Bad : {bad}</p>
-    <p>Average : {total/3}</p>
-    <p>positive : {}</p>
-  </div>
-  )
-}
+const Statistics = ({ good, neutral, bad }) => {
+  const total = good + neutral + bad;
+  const average = (total === 0) ? 0 : total / 3;
+  const positive = (total === 0) ? 0 : (good / total) * 100;
+
+  if (total === 0) {
+    return (
+      <div>
+        <p>No feedback given</p>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <p>Good : {good} </p>
+        <p>Neutral : {neutral}</p>
+        <p>Bad : {bad}</p>
+        <p>Average : {average.toFixed(1)}</p>
+        <p>Positive : {positive.toFixed(1)}%</p>
+      </div>
+    );
+  }
+};
 
 export default App

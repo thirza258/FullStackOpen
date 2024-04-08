@@ -1,10 +1,13 @@
 import ReactDOM from "react-dom/client"
 import React from "react"
 
-const Notes = ({ notes }) => {
-    return (
+const Notes = ({ notes, toggleImportance }) => {
+
+  const label = notes.importance ? 'make not important' : 'make important'
+
+  return (
       <div>
-        <li>{notes.content}</li>
+        <li>{notes.content}<button onClick={toggleImportance}>{label}</button></li>
       </div>
     )
   }

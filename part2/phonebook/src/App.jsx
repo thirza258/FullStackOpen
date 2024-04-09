@@ -3,6 +3,7 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import axios from 'axios'
+import services from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,12 +13,9 @@ const App = () => {
 
   const hook = () => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
+    services.getAll().then(response => {
+      setPersons(response)
+    })
   }
 
   useEffect(hook, [])
@@ -27,12 +25,13 @@ const App = () => {
     const personObject = {
       name: newName,
       number : newNumber,
-      id: persons.length + 1,
     }
 
-    setPersons(persons.concat(personObject))
-    setNewName('')
-    setNewNumber('')
+    services.create(personObject).then(response => {
+      setPersons(persons.concat(response))
+      setNewName('')
+      setNewNumber('')
+    })
   }
 
   const handle = (event) => {

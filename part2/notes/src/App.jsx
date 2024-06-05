@@ -5,6 +5,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import Notes from './components/Notes'
 import noteService from './services/notes'
+import Notification from './components/Notification'
 
 const App = (props) => {
   // const [notes, setNotes] = useState(props.notes)
@@ -12,6 +13,7 @@ const App = (props) => {
   const [newNote, setNewNote] = useState(
     'a new note...'
   ) 
+  const [errorMessage, setErrorMessage] = useState('some Error happened...')
   const [showAll, setShowAll] = useState(true)
 
   useEffect(() => {
@@ -27,7 +29,10 @@ const App = (props) => {
     noteService.update(id, changedNote).then(response => {
       setNotes(notes.map(note => note.id !== id ? note : response))
     }).catch(error => {
-      alert(`the note '${note.content}' was already deleted from server`)
+      setErrorMessage(`Note '${note.content}' was already removed from server`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
       setNotes(notes.filter(n => n.id !== id))
     })
 }
@@ -98,9 +103,11 @@ const App = (props) => {
   //     })
   // }
 
+
   return (
     <div>
       <h1>Notes</h1>
+      <Notification message={errorMessage}/>
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all' }
@@ -117,6 +124,21 @@ const App = (props) => {
         onChange={handleNoteChange}/>
         <button type="submit">save</button>
       </form>   
+      <Footer />
+    </div>
+  )
+}
+
+const Footer = () => {
+  const footerStyle = {
+    color: 'green',
+    fontStyle: 'italic',
+    fontSize: 16
+  }
+  return (
+    <div style={footerStyle}>
+      <br />
+      <em>Note app, Department of Computer Science, University of Helsinki 2024</em>
     </div>
   )
 }

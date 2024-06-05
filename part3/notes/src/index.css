@@ -66,13 +66,3 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
-
-.success {
-  border: 1px solid green;
-  color: green;
-}
-
-.error {
-  border: 1px solid red;
-  color: red;
-}

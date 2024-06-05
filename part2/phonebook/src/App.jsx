@@ -10,6 +10,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [personsToShow, setPersonsToShow] = useState([...persons])
+  console.log(...persons)
+  const [errorMessage, setErrorMessage] = useState('new error')
 
   const hook = () => {
     console.log('effect')
@@ -31,6 +33,29 @@ const App = () => {
       setPersons(persons.concat(response))
       setNewName('')
       setNewNumber('')
+    })
+  }
+
+  const deletePerson = (event, id) => {
+    event.preventDefault()
+    services.deletePerson(id).then(response => {
+      console.log(response)
+      setPersons(persons.filter(person => person.id !== id))
+      setErrorMessage(`Deleted ${persons.find(person => person.id === id).name}`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    })
+
+
+  }
+
+  const updatePerson = (event, id) => {
+    event.preventDefault()
+    const person = persons.find(person => person.id === id)
+    const changedPerson = {...person, number: newNumber}
+    services.update(id, changedPerson).then(response => {
+      setPersons(persons.map(person => person.id !== id ? person : response))
     })
   }
 
@@ -68,6 +93,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter  persons={persons} setPersonsToShow={setPersonsToShow} />
       <h2>Add a new</h2>
       <PersonForm persons={persons} setPersons={setPersons} />

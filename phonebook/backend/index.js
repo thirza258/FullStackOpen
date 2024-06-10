@@ -1,11 +1,12 @@
 const http = require('http')
 const express = require('express')
+require('dotenv').config()
 
 const morgan = require('morgan')
 const app = express()
 app.use(express.json())
 // var logger = morgan('tiny')
-
+const Person = require('./models/person')
 // app.use(logger)
 
 var combined = morgan('combined')
@@ -39,7 +40,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(person)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/info', (request, response) => {
@@ -69,7 +72,7 @@ app.get('/api/person/:id', (request, response) => {
 })
 
 app.post('/api/persons',morgan('combined'), (request, response) => {
-    const body = request.body
+  const body = request.body
 
   if (!body.name && !body.number) {
     return response.status(400).json({ 
@@ -83,22 +86,21 @@ app.post('/api/persons',morgan('combined'), (request, response) => {
 
   // combined(`POST /api/persons HTTP/1.1 200 - 1.000 ms - ${body.name} ${body.number}`)
 
-  const persons = {
+  const persons = new Person({
     name: body.name,
     number: body.number,
-    id: Math.random(),
-  }
+  })
 
-  person = person.concat(persons)
-
-  response.json(person)
+  persons.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 
 // app.use(new_morgan)
 
 
-const PORT = 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })

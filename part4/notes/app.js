@@ -5,6 +5,7 @@ const cors = require('cors')
 const notesRouter = require('./controllers/notes')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
+require('express-async-errors')
 const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)

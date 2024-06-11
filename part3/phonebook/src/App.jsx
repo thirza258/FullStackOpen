@@ -70,6 +70,8 @@ const App = () => {
       notifyWith(`${createdPerson.name} added!`)
 
       cleanForm()
+    }).catch(error => {
+      notifyWith(error.response.data.error, 'error')
     })
   }
 

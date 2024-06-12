@@ -36,8 +36,6 @@ if (process.argv.length == 3) {
     
 }
 
-
-
 const person = new Person({
     name: nameUser,
     number: numberUser,

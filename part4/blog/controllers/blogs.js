@@ -2,6 +2,7 @@ const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
+const middleware = require('../utils/middleware')
 
 // const getTokenFrom = request => {
 //   const authorization = request.get('authorization')
@@ -11,7 +12,7 @@ const User = require('../models/user')
 //   return null
 // }
 
-blogRouter.get('/', middleware.userExtractor, async (request, response) => {
+blogRouter.get('/', middleware.userExtractor, async (request, response, next) => {
   try {
     const blogs = await Blog.find({})
     const user = await User.find({})

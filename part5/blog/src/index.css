@@ -74,3 +74,8 @@ button:focus-visible {
 .done {
   color: #00b894;
 }
+
+.blogItem {
+  margin: 1.5em 0;
+  border: #1a1a1a;
+}

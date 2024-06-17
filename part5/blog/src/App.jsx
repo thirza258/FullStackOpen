@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
-
-
+import Toggleable from './components/Toggleable'
+import LoginForm from './components/Login'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -16,6 +17,7 @@ const App = () => {
   const [newURL, setNewURL] = useState('')
   const [newLikes, setNewLikes] = useState(0)
   const [errorMessage, setErrorMessage] = useState(null)
+  const noteFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -63,17 +65,7 @@ const App = () => {
     }
   }
 
-  
-
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newURL,
-      likes: newLikes
-    }
-
+  const addBlog = async (blogObject) => {
     await blogService.create(blogObject)
     setNewTitle('')
     setNewAuthor('')
@@ -84,38 +76,29 @@ const App = () => {
   }
 
   const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>
-        title:
-          <input
-          value={newTitle}
-          onChange={({ target }) => setNewTitle(target.value)}
-        />
-      </div>
-      <div>
-        author:
-          <input
-          value={newAuthor}
-          onChange={({ target }) => setNewAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url:
-          <input
-          value={newURL}
-          onChange={({ target }) => setNewURL(target.value)}
-        />
-      </div>
-      <div>
-        likes:
-          <input
-          value={newLikes}
-          onChange={({ target }) => setNewLikes(target.value)}
-        />
-      </div>
-      <button type="submit">save</button>
-    </form>  
+    <Toggleable buttonLabel='new blog' ref={noteFormRef}>
+      <BlogForm createBlog={addBlog} 
+        newTitle={newTitle} setNewTitle={setNewTitle}
+        newAuthor={newAuthor} setNewAuthor={setNewAuthor}
+        newURL={newURL} setNewURL={setNewURL}
+        newLikes={newLikes} setNewLikes={setNewLikes} 
+      />
+    </Toggleable>
   )
+
+  const loginForm = () => {
+    return (
+      <Toggleable buttonLabel='login'>
+        <LoginForm
+          handleLogin={handleLogin}
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+        />
+      </Toggleable>
+    );
+  }
 
   return (
     <div>
@@ -131,8 +114,12 @@ const App = () => {
     }
 
       <h2>blogs</h2>
+      <button onClick={()=> setShowDetail(!showDetail)}>
+        show {showDetail ? 'less' : 'more'}
+      </button>
+      
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog className="blogItem" key={blog.id} blog={blog} />
       )}
     </div>
   )

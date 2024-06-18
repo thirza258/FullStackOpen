@@ -18,12 +18,22 @@ const App = () => {
   const [newLikes, setNewLikes] = useState(0)
   const [errorMessage, setErrorMessage] = useState(null)
   const noteFormRef = useRef()
+  const [showDetail, setShowDetail] = useState(false)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }, [])
+    const fetchBlogs = async () => {
+      try {
+        const blogs = await blogService.getAll();
+        // Sort blogs by likes in descending order
+        const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
+        setBlogs(sortedBlogs);
+      } catch (error) {
+        console.error('Error fetching blogs', error);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogsappUser')
@@ -100,6 +110,39 @@ const App = () => {
     );
   }
 
+  const handleLike = async (blog) => {
+    try {
+      const updatedBlog = await blogService.update(blog.id, {
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes + 1,
+      });
+
+      const sortedBlogs = blogs
+        .map(b => (b.id !== blog.id ? b : updatedBlog))
+        .sort((a, b) => b.likes - a.likes);
+      setBlogs(sortedBlogs);
+    } catch (exception) {
+      setErrorMessage('Error: Could not update blog');
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  }
+
+  const handleDelete = async (blogId) => {
+    try {
+      await blogService.deleteBlog(blogId);
+      setBlogs(blogs.filter(blog => blog.id !== blogId));
+    } catch (exception) {
+      setErrorMessage('Error: Could not delete blog');
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  };
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -114,13 +157,12 @@ const App = () => {
     }
 
       <h2>blogs</h2>
-      <button onClick={()=> setShowDetail(!showDetail)}>
-        show {showDetail ? 'less' : 'more'}
-      </button>
-      
+      <div>
       {blogs.map(blog =>
-        <Blog className="blogItem" key={blog.id} blog={blog} />
+        <Blog className="blogItem"  key={blog.id} blog={blog} handleLike={() => handleLike(blog)} handleDelete={() => handleDelete(blog.id)} />
       )}
+      </div>
+      
     </div>
   )
 }

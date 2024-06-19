@@ -26,39 +26,43 @@ const BlogForm = ({ createBlog }) => {
     <div>
       <h2>Create a new Blog</h2>
       <form onSubmit={addBlog}>
-      <div>
-        title:
+        <div>
+          title:
           <input
-          value={newTitle}
-          onChange={({ target }) => setNewTitle(target.value)}
-        />
-      </div>
-      <div>
-        author:
+            aria-label="title:"
+            value={newTitle}
+            onChange={({ target }) => setNewTitle(target.value)}
+          />
+        </div>
+        <div>
+          author:
           <input
-          value={newAuthor}
-          onChange={({ target }) => setNewAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url:
+            aria-label="author:"
+            value={newAuthor}
+            onChange={({ target }) => setNewAuthor(target.value)}
+          />
+        </div>
+        <div>
+          url:
           <input
-          value={newURL}
-          onChange={({ target }) => setNewURL(target.value)}
-        />
-      </div>
-      <div>
-        likes:
+            aria-label="url:"
+            value={newURL}
+            onChange={({ target }) => setNewURL(target.value)}
+          />
+        </div>
+        <div>
+          likes:
           <input
-          value={newLikes}
-          onChange={({ target }) => setNewLikes(target.value)}
-        />
-      </div>
-      <button type="submit">save</button>
-    </form>  
+            aria-label="likes:"
+            value={newLikes}
+            onChange={({ target }) => setNewLikes(target.value)}
+          />
+        </div>
+        <button type="submit">save</button>
+      </form>
     </div>
-  )
-}
+  );
+};
 
 BlogForm.propTypes = {
   createBlog: PropTypes.func.isRequired

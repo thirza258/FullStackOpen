@@ -11,8 +11,12 @@ import Login from './components/login'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification, clearNotification } from './reducers/notificationReducer'
 import { addBlog, likeBlog, deleteBlog, initializeBlogs} from './reducers/blogReducer'
-import { clearUser, setUser } from './reducers/userReducer'
-
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
+import UserList from './components/UserList'
+import UserDetail from './components/UserDetail'
+import { initializeUser, loginUser, logoutUser } from './reducers/userReducer'
+import BlogDetail from './components/BlogDetail'
+import { initializeUsers } from './reducers/usersReducer'
 
 const App = () => {
 
@@ -31,11 +35,12 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const user = storage.loadUser()
-    if (user) {
-      setUser(user)
-    }
-  }, [])
+    dispatch(initializeUser());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(initializeUsers());
+  }, [dispatch]);
 
   // const blogFormRef = createRef()
 
@@ -47,15 +52,10 @@ const App = () => {
   }
 
   const handleLogin = async (credentials) => {
-    try {
-      const user = await loginService.login(credentials)
-      setUser(user)
-      storage.saveUser(user)
-      notify(`Welcome back, ${user.name}`)
-    } catch (error) {
-      notify('Wrong credentials', 'error')
-    }
-  }
+    dispatch(loginUser(credentials))
+      .then(() => notify(`Welcome back, ${credentials.username}`))
+      .catch(() => notify('Wrong credentials', 'error'));
+  };
 
   const handleCreate = async (blog) => {
     dispatch(addBlog(blog))
@@ -67,9 +67,7 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    // Perform any additional cleanup if needed (e.g., clear local storage)
-    storage.removeUser();
-    dispatch(clearUser());
+    dispatch(logoutUser());
   };
 
   const handleDelete = (blog) => {
@@ -83,7 +81,7 @@ const App = () => {
       <div>
         <h2>blogs</h2>
         <Notification />
-        <Login  />
+        <Login  handleLogin={handleLogin}/>
       </div>
     )
   }
@@ -95,25 +93,39 @@ const App = () => {
   }
 
   return (
-      <div>
+      <div className="container">
         <h2>blogs</h2>
         <Notification />
         <div>
+          <Link to="/">blogs</Link>
+          <Link to="/users">users</Link>
           {user?.name} logged in
           <button onClick={handleLogout}>logout</button>
         </div>
-        <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-          <NewBlog doCreate={handleCreate} />
-        </Togglable>
-        {blogs?.map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
-            handleVote={handleVote}
-            handleDelete={handleDelete}
-          />
-        )}
+        <Routes>
+          <Route path="/" element={
+            <>
+              <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+                <NewBlog doCreate={handleCreate} />
+              </Togglable>
+              {blogs.map(blog =>
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  handleVote={handleVote}
+                  handleDelete={handleDelete}
+                  handleBlogDetail={() => <Navigate to={`/blogs/${blog.id}`} />}
+                />
+              )}
+            </>
+          } />
+          <Route path="/users" element={<UserList />} />
+          <Route path="/users/:id" element={<UserDetail />} />
+          <Route path="/blogs/:id" element={<BlogDetail />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
       </div>
+
     )
 }
 

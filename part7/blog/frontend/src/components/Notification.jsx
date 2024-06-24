@@ -10,6 +10,8 @@ const Notification = () => {
 
   const { message, type } = notification
 
+  console.log('notification', message)
+
   const style = {
     backgroundColor: 'lightgrey',
     margin: '10px',

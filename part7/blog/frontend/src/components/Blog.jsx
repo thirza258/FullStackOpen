@@ -39,6 +39,7 @@ const Blog = ({ blog, handleVote, handleDelete }) => {
           {canRemove && <button onClick={() => handleDelete(blog)}>
             remove
           </button>}
+          <button onClick={() => handleBlogDetail(blog)}>details</button>
         </div>
       )}
     </div>

@@ -25,6 +25,10 @@ const blogSlice = createSlice({
       setBlogs(state, action) {
         console.log('Setting blogs, state now:', state);
         return action.payload;
+      },
+      setBlog(state, action) {
+        const updatedBlog = action.payload;
+        return state.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog);
       }
     },
   });
@@ -57,6 +61,7 @@ export const initializeBlogs = () => {
         dispatch(setNotification(`Blog created: ${blog.title}, ${blog.author}`, 'success'))
       } catch (error) {
         dispatch(setNotification(`Error creating blog: ${error.message}`, 'error'))
+        console.error(error)
       }
     }
   }
@@ -70,6 +75,7 @@ export const initializeBlogs = () => {
         dispatch(setNotification(`You liked ${updatedBlog.title} by ${updatedBlog.author}`, 'success'))
       } catch (error) {
         dispatch(setNotification(`Error liking blog: ${error.message}`, 'error'))
+        console.error(error)
       }
     }
   }
@@ -82,9 +88,15 @@ export const initializeBlogs = () => {
         dispatch(setNotification(`Blog removed`, 'success'))
       } catch (error) {
         dispatch(setNotification(`Error removing blog: ${error.message}`, 'error'))
+        console.error(error)
       }
     }
   }
+
+  export const fetchBlog = id => async dispatch => {
+    const blog = await blogService.get(id);
+    dispatch(setBlog(blog));
+  };
   
-export const { createBlog, voteBlog, appendBlog, setBlogs } = blogSlice.actions;
+export const { createBlog, voteBlog, appendBlog, setBlogs, setBlog } = blogSlice.actions;
 export default blogSlice.reducer

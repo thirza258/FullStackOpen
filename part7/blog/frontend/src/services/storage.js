@@ -1,12 +1,14 @@
-const KEY = 'blogUserKey'
+const KEY = 'secret'
 
 const saveUser = (user) => {
-  localStorage.setItem(KEY, JSON.stringify(user))
+  console.log('Saving user:', user);
+  localStorage.setItem(KEY, JSON.stringify(user));
 }
 
 const loadUser = () => {
-  const user = localStorage.getItem(KEY)
-  return user ? JSON.parse(user) : null
+  const user = localStorage.getItem(KEY);
+  console.log('Loaded user:', user);
+  return user ? JSON.parse(user) : null;
 }
 
 const me = () => {

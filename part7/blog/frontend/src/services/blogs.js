@@ -3,9 +3,16 @@ import storage from './storage'
 
 const baseUrl = 'http://localhost:3003/api/blogs'
 
-const getConfit = () => ({
-  headers : { Authorization: `Bearer ${storage.loadUser().token}` }
-})
+const getConfit = () => {
+  const user = storage.loadUser();
+  if (!user) {
+    console.error('User not logged in');
+    return { headers: {} };
+  }
+
+  return { headers: { Authorization: `Bearer ${user.token}` } };
+}
+
 
 const getAll = () => {
   const request = axios.get(baseUrl)
@@ -24,6 +31,11 @@ const create = async (newObject) => {
 
 const remove = async (id) => {
   const response = await axios.delete(`${baseUrl}/${id}`, getConfit())
+  return response.data
+}
+
+const getBlog = async (id) => {
+  const response = await axios.get(`${baseUrl}/${id}`)
   return response.data
 }
 

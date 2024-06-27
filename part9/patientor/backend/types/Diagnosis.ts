@@ -1,5 +1,5 @@
 export type Diagnosis = {
-    id: number;
+    code: string;
     name: string;
     latin?: string;
 };

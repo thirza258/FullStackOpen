@@ -10,7 +10,31 @@ const patients: Patient[] = [
         dateOfBirth: '1970-01-01',
         ssn: '010170-999A',
         gender: gender.male,
-        occupation: 'gardener'
+        occupation: 'gardener',
+        entries: [
+            {
+                id: '1',
+                description: 'Back pain',
+                date: '2019-08-05',
+                specialist: 'Dr. Smith',
+                diagnosisCodes: ['M54.2'],
+                type: 'HealthCheck',
+                healthCheckRating: 0
+            },
+            {
+                id: '4',
+                description: 'Back pain',
+                date: '2019-08-05',
+                specialist: 'Dr. Smith',
+                diagnosisCodes: ['M54.2'],
+                type: 'Hospital',
+                discharge: {
+                    date: '2019-08-10',
+                    criteria: 'Healing'
+                }
+            }
+
+        ]
     }
 ];
 
